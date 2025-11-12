@@ -1,0 +1,16 @@
+.swiperStyles{
+    padding: 0 50px;
+    width:100%;
+}
+.swiperslide{
+   overflow: hidden;
+   width: calc(100%/3-20px) !important;
+}
+@media(max-width:900px){
+    .swiperStyles{
+        padding:0;
+    }
+    .swiperslide{
+        width: auto !important;
+    }
+}
