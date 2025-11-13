@@ -1,4 +1,4 @@
-import { MenuItem, Select, Box, Button, InputAdornment } from "@mui/material";
+import { MenuItem, Select, Box, Button } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +14,9 @@ export default function SearchHospital() {
   useEffect(() => {
     const fetchStates = async () => {
       try {
-        const { data } = await axios.get("https://meddata-backend.onrender.com/states");
+        const { data } = await axios.get(
+          "https://meddata-backend.onrender.com/states"
+        );
         setStates(data);
       } catch (error) {
         console.error("Error fetching states:", error);
@@ -70,7 +72,7 @@ export default function SearchHospital() {
         name="state"
         value={formData.state}
         onChange={handleChange}
-        inputProps={{ "data-testid": "state-select" }} // ✅ helps tests locate it
+        inputProps={{ "data-testid": "state-select" }}
         required
         sx={{ minWidth: 200, width: "100%" }}
       >
@@ -91,7 +93,7 @@ export default function SearchHospital() {
         name="city"
         value={formData.city}
         onChange={handleChange}
-        inputProps={{ "data-testid": "city-select" }} // ✅ helps tests locate it
+        inputProps={{ "data-testid": "city-select" }}
         required
         sx={{ minWidth: 200, width: "100%" }}
       >

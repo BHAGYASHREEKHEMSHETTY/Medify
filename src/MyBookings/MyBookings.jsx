@@ -73,13 +73,14 @@ export default function MyBookings(){
                               booking={true}
                             />
                           ))}
-                          {filteredBookings.length ==0 &&(
+                          {filteredBookings.length ===0 &&(
                             <Typography variant="h3" bgcolor="#fff" borderRadius={2} p={3}>
                                 No Bookings Found!
                             </Typography>
                           )}
                     </Stack>
-                    <img src={banner} width={360} height="auto" />
+                    <img src={banner} width={360} height="auto" alt="Booking banner" />
+
                 </Stack>
             </Container>
         </Box>
