@@ -10,11 +10,12 @@ export default function SearchHospital() {
   const [formData, setFormData] = useState({ state: "", city: "" });
   const navigate = useNavigate();
 
+  // ✅ Fetch states on mount
   useEffect(() => {
     const fetchStates = async () => {
       try {
-        const response = await axios.get("https://meddata-backend.onrender.com/states");
-        setStates(response.data);
+        const { data } = await axios.get("https://meddata-backend.onrender.com/states");
+        setStates(data);
       } catch (error) {
         console.error("Error fetching states:", error);
       }
@@ -22,21 +23,20 @@ export default function SearchHospital() {
     fetchStates();
   }, []);
 
+  // ✅ Fetch cities when state changes
   useEffect(() => {
     const fetchCities = async () => {
-      setCities([]);
-      setFormData((prev) => ({ ...prev, city: "" }));
+      if (!formData.state) return; // safety check
       try {
-        const data = await axios.get(`https://meddata-backend.onrender.com/cities/${formData.state}`);
-        setCities(data.data);
+        const { data } = await axios.get(
+          `https://meddata-backend.onrender.com/cities/${formData.state}`
+        );
+        setCities(data);
       } catch (error) {
-        console.log("Error fetching city:", error);
+        console.error("Error fetching cities:", error);
       }
     };
-
-    if (formData.state !== "") {
-      fetchCities();
-    }
+    fetchCities();
   }, [formData.state]);
 
   const handleChange = (e) => {
@@ -61,18 +61,16 @@ export default function SearchHospital() {
         flexDirection: { xs: "column", md: "row" },
         justifyContent: "space-between",
       }}
+      data-testid="search-form"
     >
+      {/* STATE DROPDOWN */}
       <Select
         displayEmpty
         id="state"
         name="state"
         value={formData.state}
         onChange={handleChange}
-        startAdornment={
-          <InputAdornment position="start">
-            <SearchIcon />
-          </InputAdornment>
-        }
+        inputProps={{ "data-testid": "state-select" }} // ✅ helps tests locate it
         required
         sx={{ minWidth: 200, width: "100%" }}
       >
@@ -86,17 +84,14 @@ export default function SearchHospital() {
         ))}
       </Select>
 
+      {/* CITY DROPDOWN */}
       <Select
         displayEmpty
         id="city"
         name="city"
         value={formData.city}
         onChange={handleChange}
-        startAdornment={
-          <InputAdornment position="start">
-            <SearchIcon />
-          </InputAdornment>
-        }
+        inputProps={{ "data-testid": "city-select" }} // ✅ helps tests locate it
         required
         sx={{ minWidth: 200, width: "100%" }}
       >
@@ -110,6 +105,7 @@ export default function SearchHospital() {
         ))}
       </Select>
 
+      {/* SEARCH BUTTON */}
       <Button
         type="submit"
         variant="contained"
@@ -117,6 +113,7 @@ export default function SearchHospital() {
         startIcon={<SearchIcon />}
         sx={{ py: "15px", px: 8, flexShrink: 0 }}
         disableElevation
+        data-testid="search-button"
       >
         Search
       </Button>
