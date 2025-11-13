@@ -2,6 +2,7 @@ import { Container, Box, Stack, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+
 import icon from "../assets/tick.png";
 import banner from "../assets/banner.png";
 import HospitalCard from "../components/HospitalCard/HospitalCard";
@@ -11,7 +12,7 @@ import NavBar from "../components/NavBar/NavBar";
 import AutohideSnackbar from "../components/AutohideSnackbar/AutohideSnackbar";
 
 export default function Search() {
-  const [searchParams] = useSearchParams(); // ✅ removed unused setSearchParams
+  const [searchParams] = useSearchParams();
   const [hospitals, setHospitals] = useState([]);
   const [state, setState] = useState(searchParams.get("state"));
   const [city, setCity] = useState(searchParams.get("city"));
@@ -26,10 +27,9 @@ export default function Search() {
     evening: ["06:00 PM", "06:30 PM", "07:00 PM", "07:30 PM"],
   };
 
-  // Fetch hospitals when state or city changes
+  // ✅ Fetch hospitals when state or city changes
   useEffect(() => {
     const getHospitals = async () => {
-      setHospitals([]);
       setIsLoading(true);
       try {
         const { data } = await axios.get(
@@ -43,12 +43,10 @@ export default function Search() {
       }
     };
 
-    if (state && city) {
-      getHospitals();
-    }
+    if (state && city) getHospitals();
   }, [state, city]);
 
-  // Update state and city when URL params change
+  // ✅ Sync URL params with state
   useEffect(() => {
     setState(searchParams.get("state"));
     setCity(searchParams.get("city"));
@@ -65,11 +63,10 @@ export default function Search() {
       <Box
         sx={{
           background: "linear-gradient(#EFF5FE, rgba(241,247,255,0.47))",
-          pl: 0,
           width: "100%",
         }}
       >
-        {/* Search Section */}
+        {/* 🔍 Search Section */}
         <Box
           sx={{
             position: "relative",
@@ -93,7 +90,7 @@ export default function Search() {
           </Container>
         </Box>
 
-        {/* Hospital List Section */}
+        {/* 🏥 Hospital List Section */}
         <Container maxWidth="xl" sx={{ pt: 8, pb: 10, px: { xs: 0, md: 4 } }}>
           {hospitals.length > 0 && (
             <Box sx={{ mb: 3 }}>
@@ -122,11 +119,21 @@ export default function Search() {
           <Stack alignItems="flex-start" direction={{ md: "row" }}>
             <Stack
               mb={{ xs: 4, md: 0 }}
-              width={{ xs: 1, md: "calc(100%-384px)" }}
+              width={{ xs: 1, md: "calc(100% - 384px)" }}
               mr="24px"
               spacing={3}
             >
-              {hospitals.length > 0 &&
+              {isLoading ? (
+                <Typography
+                  variant="h3"
+                  bgcolor="#fff"
+                  borderRadius={2}
+                  p={3}
+                  textAlign="center"
+                >
+                  Loading...
+                </Typography>
+              ) : hospitals.length > 0 ? (
                 hospitals.map((hospital) => (
                   <HospitalCard
                     key={hospital["Hospital Name"]}
@@ -134,16 +141,30 @@ export default function Search() {
                     handleBooking={handleBookingModal}
                     details={hospital}
                   />
-                ))}
-
-              {isLoading && (
-                <Typography variant="h3" bgcolor="#fff" borderRadius={2} p={3}>
-                  Loading...
-                </Typography>
+                ))
+              ) : (
+                state &&
+                city && (
+                  <Typography
+                    variant="h3"
+                    bgcolor="#fff"
+                    borderRadius={2}
+                    p={3}
+                    textAlign="center"
+                  >
+                    No hospitals found for {city}, {state}
+                  </Typography>
+                )
               )}
 
               {!state && (
-                <Typography variant="h3" bgcolor="#fff" borderRadius={2} p={3}>
+                <Typography
+                  variant="h3"
+                  bgcolor="#fff"
+                  borderRadius={2}
+                  p={3}
+                  textAlign="center"
+                >
                   Please select a state and city
                 </Typography>
               )}
@@ -153,7 +174,7 @@ export default function Search() {
           </Stack>
         </Container>
 
-        {/* Booking Modal */}
+        {/* 📅 Booking Modal */}
         <BookingModal
           open={isModalOpen}
           bookingDetails={bookingDetails}
@@ -161,7 +182,7 @@ export default function Search() {
           setOpen={setIsModalOpen}
         />
 
-        {/* Snackbar Message */}
+        {/* ✅ Success Snackbar */}
         <AutohideSnackbar
           setOpen={setShowBookingSuccess}
           open={showBookingSuccess}
