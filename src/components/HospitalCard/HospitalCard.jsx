@@ -13,8 +13,16 @@ export default function HospitalCard({
 }) {
   const [showCalendar, setShowCalendar] = useState(false);
 
+  const handleOpenCalendar = () => {
+    setShowCalendar(true);
+  };
+
   return (
-    <Box sx={{ bgcolor: "#fff", borderRadius: 2, p: { xs: 2, md: 4 } }}>
+    <Box
+      sx={{ bgcolor: "#fff", borderRadius: 2, p: { xs: 2, md: 4 }, cursor: "pointer" }}
+      onClick={!booking ? handleOpenCalendar : undefined}
+      data-testid="hospital-card"
+    >
       <Stack
         flexWrap={"wrap"}
         spacing={{ xs: 1, md: 4 }}
@@ -39,6 +47,7 @@ export default function HospitalCard({
             textTransform="capitalize"
             lineHeight={1}
             mb={1}
+            data-testid="hospital-name"
           >
             {details["Hospital Name"]?.toLowerCase()}
           </Typography>
@@ -54,18 +63,11 @@ export default function HospitalCard({
             {details["Hospital Type"]}
           </Typography>
 
-          {/* Consultation Fee Section */}
           <Stack direction="row" spacing="4px" mb={2} flexWrap="wrap">
-            <Typography
-              textTransform="uppercase"
-              color="primary.green"
-              fontWeight={800}
-            >
+            <Typography textTransform="uppercase" color="primary.green" fontWeight={800}>
               Free
             </Typography>
-            <Typography
-              sx={{ color: "#787887", textDecoration: "line-through" }}
-            >
+            <Typography sx={{ color: "#787887", textDecoration: "line-through" }}>
               ₹500
             </Typography>
             <Typography>Consultation fee at clinic</Typography>
@@ -73,7 +75,6 @@ export default function HospitalCard({
 
           <Divider sx={{ borderStyle: "dashed", mb: 2 }} />
 
-          {/* Rating Section */}
           <Stack
             spacing="4px"
             px={1}
@@ -84,13 +85,7 @@ export default function HospitalCard({
             alignItems="center"
             width="fit-content"
           >
-            <Box
-              component={"img"}
-              src={thumb}
-              height={{ xs: 16, md: 20 }}
-              width={{ xs: 16, md: 20 }}
-              alt="rating"
-            />
+            <Box component={"img"} src={thumb} height={{ xs: 16, md: 20 }} width={{ xs: 16, md: 20 }} alt="rating" />
             <Typography
               fontWeight={700}
               sx={{ opacity: 0.5 }}
@@ -120,7 +115,8 @@ export default function HospitalCard({
               <Button
                 variant="contained"
                 disableElevation
-                onClick={() => setShowCalendar((prev) => !prev)}
+                onClick={(e) => { e.stopPropagation(); setShowCalendar((prev) => !prev); }}
+                data-testid="open-booking-btn"
               >
                 {!showCalendar ? "Book FREE Center Visit" : "Hide Booking Calendar"}
               </Button>
@@ -134,12 +130,14 @@ export default function HospitalCard({
                 variant="outlined"
                 color="primary"
                 sx={{ fontSize: 14, borderRadius: 1 }}
+                data-testid="selected-time"
               />
               <Chip
                 color="success"
                 variant="outlined"
                 sx={{ fontSize: 14, borderRadius: 1 }}
                 label={format(new Date(details.bookingDate), "dd MMMM yyyy")}
+                data-testid="selected-date"
               />
             </Stack>
           )}
@@ -152,6 +150,7 @@ export default function HospitalCard({
           availableSlots={availableSlots}
           handleBooking={handleBooking}
           details={details}
+          data-testid="booking-calendar"
         />
       )}
     </Box>
